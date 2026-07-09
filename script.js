@@ -1,7 +1,31 @@
 /* ========================================
    GUAA'S WEBSITE - JAVASCRIPT
-   Simple interactive features and platypus facts
+   Interactive features and smooth scrolling
    ======================================== */
+
+// Function to smoothly scroll to a section
+function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Add smooth scrolling to all navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        // Only prevent default for hash links
+        if (this.getAttribute('href').startsWith('#')) {
+            e.preventDefault();
+            const target = this.getAttribute('href');
+            scrollToSection(target.substring(1));
+        }
+    });
+});
+
+// Add a fun message to the console for people who inspect the code!
+console.log('%c🦫 Welcome to Guaa\'s Website! 🦫', 'font-size: 20px; color: #4fb3d9; font-weight: bold;');
+console.log('%cCool that you\'re checking out the code! Keep learning and building amazing things! 💙', 'font-size: 14px; color: #001f3f;');
 
 // Random platypus fact function
 const platypusFacts = [
@@ -17,15 +41,32 @@ const platypusFacts = [
     "Platypuses have electroreceptors to find food!",
 ];
 
+// Function to display a random platypus fact (can be called anytime!)
 function showRandomPlatypusFact() {
     const randomIndex = Math.floor(Math.random() * platypusFacts.length);
     console.log('🦫 Platypus Fact: ' + platypusFacts[randomIndex]);
     alert('🦫 Fun Platypus Fact: ' + platypusFacts[randomIndex]);
 }
 
-// Add a fun message to the console
-console.log('%c🦫 Welcome to Guaa\'s Website! 🦫', 'font-size: 20px; color: #4fb3d9; font-weight: bold;');
-console.log('%cCool that you\'re checking out the code! Keep learning and building amazing things! 💙', 'font-size: 14px; color: #001f3f;');
+// Track page scroll for fun effects
+let scrollPosition = 0;
+window.addEventListener('scroll', function() {
+    scrollPosition = window.scrollY;
+    
+    // You can add more scroll effects here!
+    // For example: parallax effects, animations triggered on scroll, etc.
+});
+
+// Add click listeners to all interest cards for extra interactivity
+document.querySelectorAll('.interest-card').forEach(card => {
+    card.addEventListener('click', function() {
+        // Toggle a visual effect when clicked
+        this.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 200);
+    });
+});
 
 // Display a welcome message when page loads
 window.addEventListener('load', function() {
@@ -33,46 +74,12 @@ window.addEventListener('load', function() {
     console.log('Explore the website and have fun! 💙');
 });
 
-// Keyboard Easter egg: Press 'P' to get a random platypus fact!
+// Optional: Add a fun keyboard Easter egg
+// Press 'P' to get a random platypus fact!
 document.addEventListener('keypress', function(event) {
     if (event.key.toLowerCase() === 'p') {
         showRandomPlatypusFact();
     }
-});
-
-// Add smooth scrolling to hash links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        if (this.getAttribute('href').startsWith('#')) {
-            e.preventDefault();
-            const target = this.getAttribute('href');
-            const element = document.querySelector(target);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-    });
-});
-
-// Add hover effects to cards
-document.querySelectorAll('.interest-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.05)';
-        this.style.transition = 'transform 0.3s ease';
-    });
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1)';
-    });
-});
-
-document.querySelectorAll('.project-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-5px)';
-        this.style.transition = 'transform 0.3s ease';
-    });
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-    });
 });
 
 /* ========================================
