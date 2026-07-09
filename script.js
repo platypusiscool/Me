@@ -23,8 +23,23 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Make CTA button in hero section work
+document.querySelector('.cta-button')?.addEventListener('click', function() {
+    scrollToSection('about');
+});
+
+// Make contact buttons show a message
+document.querySelectorAll('.contact-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+        if (this.href === '#' || !this.href.includes('mailto') && !this.href.includes('http')) {
+            e.preventDefault();
+            alert('🌟 Feature coming soon! Check back later for more ways to connect! 🌟');
+        }
+    });
+});
+
 // Add a fun message to the console for people who inspect the code!
-console.log('%c🦫 Welcome to Guaa\'s Website! 🦫', 'font-size: 20px; color: #4fb3d9; font-weight: bold;');
+console.log('%c🌟 Welcome to Guaa\'s Website! 🌟', 'font-size: 20px; color: #4fb3d9; font-weight: bold;');
 console.log('%cCool that you\'re checking out the code! Keep learning and building amazing things! 💙', 'font-size: 14px; color: #001f3f;');
 
 // Random platypus fact function
@@ -44,8 +59,8 @@ const platypusFacts = [
 // Function to display a random platypus fact (can be called anytime!)
 function showRandomPlatypusFact() {
     const randomIndex = Math.floor(Math.random() * platypusFacts.length);
-    console.log('🦫 Platypus Fact: ' + platypusFacts[randomIndex]);
-    alert('🦫 Fun Platypus Fact: ' + platypusFacts[randomIndex]);
+    console.log('🌟 Platypus Fact: ' + platypusFacts[randomIndex]);
+    alert('🌟 Fun Platypus Fact: ' + platypusFacts[randomIndex]);
 }
 
 // Add animation when sections come into view (fade-in effect)
@@ -71,29 +86,44 @@ document.querySelectorAll('section').forEach(section => {
     observer.observe(section);
 });
 
-// Track page scroll for fun effects
-let scrollPosition = 0;
-window.addEventListener('scroll', function() {
-    scrollPosition = window.scrollY;
-    
-    // You can add more scroll effects here!
-    // For example: parallax effects, animations triggered on scroll, etc.
+// Add hover effects to project cards
+document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px)';
+        this.style.transition = 'transform 0.3s ease';
+    });
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+    });
 });
 
-// Add click listeners to all interest cards for extra interactivity
+// Add hover effects to interest cards
 document.querySelectorAll('.interest-card').forEach(card => {
-    card.addEventListener('click', function() {
-        // Toggle a visual effect when clicked
+    card.addEventListener('mouseenter', function() {
         this.style.transform = 'scale(1.05)';
+        this.style.transition = 'transform 0.3s ease';
+    });
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
+    
+    card.addEventListener('click', function() {
+        this.style.transform = 'scale(1.08)';
         setTimeout(() => {
-            this.style.transform = '';
+            this.style.transform = 'scale(1)';
         }, 200);
     });
 });
 
+// Track page scroll for fun effects
+let scrollPosition = 0;
+window.addEventListener('scroll', function() {
+    scrollPosition = window.scrollY;
+});
+
 // Display a welcome message when page loads
 window.addEventListener('load', function() {
-    console.log('%c🦫 Welcome, friend! 🦫', 'font-size: 16px; color: #4fb3d9; font-weight: bold;');
+    console.log('%c🌟 Welcome, friend! 🌟', 'font-size: 16px; color: #4fb3d9; font-weight: bold;');
     console.log('Explore the website and have fun! 💙');
 });
 
@@ -112,6 +142,7 @@ document.addEventListener('keypress', function(event) {
    2. Modify colors in the CSS file
    3. Add more sections to the HTML
    4. Create new functions for interactivity
+   5. Press 'P' for a random platypus fact!
    
-   Happy coding! 🦫💻
+   Happy coding! 🌟💻
    ======================================== */
