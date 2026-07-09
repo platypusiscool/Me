@@ -1,46 +1,71 @@
 /* ========================================
    GUAA'S WEBSITE - JAVASCRIPT
-   Interactive features and smooth scrolling
+   Interactive features and section navigation
    ======================================== */
 
-// Function to smoothly scroll to a section
-function scrollToSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-    }
+// Hide all sections except hero on page load
+function initializeSections() {
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+        if (section.id !== 'home') {
+            section.classList.add('hidden');
+            section.classList.remove('visible');
+        } else {
+            section.classList.remove('hidden');
+            section.classList.add('visible');
+        }
+    });
 }
 
-// Add smooth scrolling to all navigation links
+// Show a specific section and hide all others
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+        if (section.id === sectionId) {
+            section.classList.remove('hidden');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            section.classList.add('hidden');
+            section.classList.remove('visible');
+        }
+    });
+}
+
+// Add navigation link event listeners
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        // Only prevent default for hash links
         if (this.getAttribute('href').startsWith('#')) {
             e.preventDefault();
-            const target = this.getAttribute('href');
-            scrollToSection(target.substring(1));
+            const target = this.getAttribute('href').substring(1);
+            showSection(target);
         }
     });
 });
 
-// Make CTA button in hero section work
+// Make logo go back to home
+document.querySelector('.logo')?.addEventListener('click', function() {
+    showSection('home');
+});
+
+// Make CTA button show message
 document.querySelector('.cta-button')?.addEventListener('click', function() {
-    scrollToSection('about');
+    alert('🌟 Use the navigation buttons above to explore each section! 🌟');
 });
 
 // Make contact buttons show a message
 document.querySelectorAll('.contact-button').forEach(button => {
     button.addEventListener('click', function(e) {
-        if (this.href === '#' || !this.href.includes('mailto') && !this.href.includes('http')) {
+        if (this.href === '#' || (!this.href.includes('mailto') && !this.href.includes('http'))) {
             e.preventDefault();
             alert('🌟 Feature coming soon! Check back later for more ways to connect! 🌟');
         }
     });
 });
 
-// Add a fun message to the console for people who inspect the code!
+// Add a fun message to the console
 console.log('%c🌟 Welcome to Guaa\'s Website! 🌟', 'font-size: 20px; color: #4fb3d9; font-weight: bold;');
-console.log('%cCool that you\'re checking out the code! Keep learning and building amazing things! 💙', 'font-size: 14px; color: #001f3f;');
+console.log('%cClick navigation buttons to explore sections! Only sections you click are visible. 💙', 'font-size: 14px; color: #001f3f;');
 
 // Random platypus fact function
 const platypusFacts = [
@@ -56,34 +81,21 @@ const platypusFacts = [
     "Platypuses have electroreceptors to find food!",
 ];
 
-// Function to display a random platypus fact (can be called anytime!)
 function showRandomPlatypusFact() {
     const randomIndex = Math.floor(Math.random() * platypusFacts.length);
     console.log('🌟 Platypus Fact: ' + platypusFacts[randomIndex]);
     alert('🌟 Fun Platypus Fact: ' + platypusFacts[randomIndex]);
 }
 
-// Add animation when sections come into view (fade-in effect)
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+// Add hover effects to interest cards
+document.querySelectorAll('.interest-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05)';
+        this.style.transition = 'transform 0.3s ease';
     });
-}, observerOptions);
-
-// Observe all sections for fade-in animation
-document.querySelectorAll('section').forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(section);
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
 });
 
 // Add hover effects to project cards
@@ -97,52 +109,18 @@ document.querySelectorAll('.project-card').forEach(card => {
     });
 });
 
-// Add hover effects to interest cards
-document.querySelectorAll('.interest-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.05)';
-        this.style.transition = 'transform 0.3s ease';
-    });
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1)';
-    });
-    
-    card.addEventListener('click', function() {
-        this.style.transform = 'scale(1.08)';
-        setTimeout(() => {
-            this.style.transform = 'scale(1)';
-        }, 200);
-    });
-});
-
-// Track page scroll for fun effects
-let scrollPosition = 0;
-window.addEventListener('scroll', function() {
-    scrollPosition = window.scrollY;
-});
-
 // Display a welcome message when page loads
 window.addEventListener('load', function() {
     console.log('%c🌟 Welcome, friend! 🌟', 'font-size: 16px; color: #4fb3d9; font-weight: bold;');
-    console.log('Explore the website and have fun! 💙');
+    console.log('Explore the website! Use the navigation buttons to view each section. 💙');
 });
 
-// Optional: Add a fun keyboard Easter egg
-// Press 'P' to get a random platypus fact!
+// Keyboard Easter egg: Press 'P' to get a random platypus fact!
 document.addEventListener('keypress', function(event) {
     if (event.key.toLowerCase() === 'p') {
         showRandomPlatypusFact();
     }
 });
 
-/* ========================================
-   EXTRA FEATURES YOU CAN MODIFY:
-   
-   1. Change platypusFacts array to add more facts
-   2. Modify colors in the CSS file
-   3. Add more sections to the HTML
-   4. Create new functions for interactivity
-   5. Press 'P' for a random platypus fact!
-   
-   Happy coding! 🌟💻
-   ======================================== */
+// Initialize sections on page load
+window.addEventListener('DOMContentLoaded', initializeSections);
