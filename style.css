@@ -18,6 +18,38 @@ body {
 }
 
 /* ========================================
+   HIDDEN SECTIONS - Only visible when button clicked
+   ======================================== */
+section.hidden {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    pointer-events: none !important;
+}
+
+section.visible {
+    display: block !important;
+    visibility: visible !important;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
    NAVIGATION BAR
    ======================================== */
 .navbar {
@@ -57,6 +89,7 @@ body {
     text-decoration: none;
     transition: color 0.3s ease;
     font-weight: 500;
+    cursor: pointer;
 }
 
 .nav-links a:hover {
@@ -190,8 +223,7 @@ body {
 }
 
 .section-image {
-    width: 100%;
-    height: 300px;
+    width: 100%;\n    height: 300px;
     object-fit: cover;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 31, 63, 0.15);
@@ -502,202 +534,34 @@ body {
     display: inline-block;
     background-color: #4fb3d9;
     color: #001f3f;
+    border: none;
     padding: 1rem 2rem;
+    font-size: 1rem;
     border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
+    cursor: pointer;
     transition: all 0.3s ease;
-    border: 2px solid #4fb3d9;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .contact-button:hover {
-    background-color: transparent;
-    color: #4fb3d9;
-}
-
-.contact-note {
-    font-size: 0.95rem;
-    margin-top: 2rem;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 1rem;
-    border-radius: 8px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.contact-image-container {
-    margin-top: 2rem;
-}
-
-.contact-image {
-    max-width: 500px;
-    width: 100%;
-    height: auto;
-    margin: 0 auto;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    display: block;
+    background-color: #2a8ab8;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* ========================================
    FOOTER
    ======================================== */
 .footer {
-    background-color: #000814;
+    background-color: #001f3f;
     color: white;
     text-align: center;
     padding: 2rem;
-    font-size: 0.95rem;
 }
 
 /* ========================================
    ANIMATIONS
    ======================================== */
-@keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
-}
-
-/* ========================================
-   MOBILE RESPONSIVE STYLES
-   ======================================== */
-@media (max-width: 768px) {
-    /* Navigation on mobile */
-    .nav-links {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    /* Hero section on mobile */
-    .hero {
-        flex-direction: column;
-        padding: 3rem 1.5rem;
-        min-height: auto;
-        gap: 2rem;
-    }
-
-    .hero-title {
-        font-size: 2.5rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1.1rem;
-    }
-
-    .hero-image {
-        max-width: 100%;
-    }
-
-    /* Section titles on mobile */
-    .section-title {
-        font-size: 1.8rem;
-    }
-
-    /* Image grids on mobile */
-    .image-grid-2 {
-        grid-template-columns: 1fr;
-    }
-
-    /* Cards on mobile */
-    .interests-grid,
-    .projects-list,
-    .gallery-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .platypus-mini-gallery,
-    .project-platypus-images {
-        grid-template-columns: 1fr;
-    }
-
-    .journal-image-row {
-        grid-template-columns: 1fr;
-    }
-
-    .contact-links {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .contact-button {
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .contact-image {
-        max-width: 100%;
-    }
-
-    .poem-container {
-        padding: 1.5rem;
-    }
-
-    .epic-poem {
-        font-size: 1rem;
-        line-height: 1.8;
-    }
-}
-
-@media (max-width: 480px) {
-    .nav-container {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .hero-title {
-        font-size: 2rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-
-    .cta-button {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-    }
-
-    .gallery-image {
-        height: 200px;
-    }
-
-    .poem-container {
-        padding: 1rem;
-    }
-
-    .epic-poem {
-        font-size: 0.9rem;
-        line-height: 1.6;
-    }
-}
+@keyframes slideInDown {\n    from {\n        opacity: 0;\n        transform: translateY(-30px);\n    }\n    to {\n        opacity: 1;\n        transform: translateY(0);\n    }\n}\n\n@keyframes slideInUp {\n    from {\n        opacity: 0;\n        transform: translateY(30px);\n    }\n    to {\n        opacity: 1;\n        transform: translateY(0);\n    }\n}\n\n/* ========================================\n   RESPONSIVE DESIGN\n   ======================================== */\n@media (max-width: 768px) {\n    .hero {\n        flex-direction: column;\n        gap: 2rem;\n        padding: 3rem 1.5rem;\n    }\n\n    .hero-title {\n        font-size: 2.5rem;\n    }\n\n    .hero-subtitle {\n        font-size: 1.1rem;\n    }\n\n    .nav-links {\n        gap: 1rem;\n        font-size: 0.8rem;\n    }\n\n    .section-title {\n        font-size: 2rem;\n    }\n\n    .interests-grid,\n    .projects-list {\n        grid-template-columns: 1fr;\n    }\n\n    .contact-links {\n        flex-direction: column;\n        gap: 1rem;\n    }\n\n    .contact-button {\n        width: 100%;\n    }\n}\n\n@media (max-width: 480px) {\n    .hero {\n        padding: 2rem 1rem;\n    }\n\n    .hero-title {\n        font-size: 2rem;\n    }\n\n    .hero-subtitle {\n        font-size: 1rem;\n    }\n\n    .cta-button {\n        padding: 0.8rem 1.5rem;\n        font-size: 1rem;\n    }\n\n    .section-title {\n        font-size: 1.5rem;\n    }\n\n    .poem-container {\n        padding: 2rem 1rem;\n    }\n\n    .nav-links {\n        gap: 0.5rem;\n        font-size: 0.7rem;\n    }\n}\n
