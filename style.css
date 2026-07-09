@@ -57,7 +57,6 @@ body {
     text-decoration: none;
     transition: color 0.3s ease;
     font-weight: 500;
-    font-size: 0.95rem;
 }
 
 .nav-links a:hover {
@@ -108,6 +107,7 @@ body {
 
 .platypus-display {
     flex: 1;
+    min-width: 250px;
 }
 
 .cta-button {
@@ -184,14 +184,15 @@ body {
 
 .image-grid-2 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin: 2rem 0;
 }
 
 .section-image {
     width: 100%;
-    height: auto;
+    height: 300px;
+    object-fit: cover;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 31, 63, 0.15);
     transition: transform 0.3s ease;
@@ -245,13 +246,12 @@ body {
 
 .interest-image {
     width: 100%;
-    height: auto;
+    height: 250px;
+    object-fit: cover;
     border-radius: 10px;
     margin-top: 1rem;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     display: block;
-    max-height: 200px;
-    object-fit: cover;
 }
 
 .platypus-mini-gallery {
@@ -263,12 +263,11 @@ body {
 
 .interest-mini-image {
     width: 100%;
-    height: auto;
+    height: 150px;
+    object-fit: cover;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: block;
-    max-height: 150px;
-    object-fit: cover;
 }
 
 /* ========================================
@@ -288,7 +287,7 @@ body {
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 2rem;
     margin-top: 2rem;
 }
@@ -363,11 +362,10 @@ body {
 
 .project-image {
     width: 100%;
-    height: auto;
+    height: 200px;
+    object-fit: cover;
     border-radius: 8px;
     margin-top: 1rem;
-    max-height: 200px;
-    object-fit: cover;
     display: block;
 }
 
@@ -424,18 +422,17 @@ body {
 
 .journal-image-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
     margin-top: 1.5rem;
 }
 
 .journal-image {
     width: 100%;
-    height: auto;
+    height: 200px;
+    object-fit: cover;
     border-radius: 8px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    max-height: 200px;
-    object-fit: cover;
     display: block;
 }
 
@@ -444,28 +441,35 @@ body {
    ======================================== */
 .aiden-yu-section {
     padding: 4rem 2rem;
-    background-color: #fff3cd;
-    border-top: 5px solid #ff6b6b;
-    border-bottom: 5px solid #ff6b6b;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+}
+
+.aiden-yu-section .section-title {
+    color: white;
+}
+
+.aiden-yu-section .section-title::after {
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 .poem-container {
     max-width: 900px;
     margin: 0 auto;
-    background-color: white;
+    background-color: rgba(0, 0, 0, 0.2);
     padding: 3rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 31, 63, 0.15);
+    border-radius: 15px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
 .epic-poem {
-    font-family: 'Georgia', serif;
     font-size: 1.1rem;
     line-height: 2;
-    color: #333;
-    text-align: left;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    color: white;
+    text-align: center;
+    font-style: italic;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    word-spacing: 0.1em;
 }
 
 /* ========================================
@@ -588,11 +592,7 @@ body {
     /* Navigation on mobile */
     .nav-links {
         flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .nav-links a {
-        font-size: 0.85rem;
+        gap: 1rem;
     }
 
     /* Hero section on mobile */
@@ -656,7 +656,7 @@ body {
     }
 
     .poem-container {
-        padding: 2rem 1rem;
+        padding: 1.5rem;
     }
 
     .epic-poem {
@@ -668,7 +668,7 @@ body {
 @media (max-width: 480px) {
     .nav-container {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
     }
 
     .hero-title {
@@ -692,8 +692,12 @@ body {
         height: 200px;
     }
 
+    .poem-container {
+        padding: 1rem;
+    }
+
     .epic-poem {
-        font-size: 0.95rem;
-        line-height: 1.7;
+        font-size: 0.9rem;
+        line-height: 1.6;
     }
 }
