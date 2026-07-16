@@ -5,6 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guaa's Personal Website</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        #gameCanvas {
+            display: block;
+            margin: 20px auto;
+            border: 3px solid #001f3f;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            cursor: pointer;
+        }
+        
+        .game-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .game-controls button {
+            background-color: #4fb3d9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        
+        .game-controls button:hover {
+            background-color: #2a8ab8;
+        }
+        
+        .game-info {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #001f3f;
+            margin: 15px 0;
+        }
+        
+        .game-info strong {
+            color: #4fb3d9;
+        }
+        
+        .game-instructions {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+            color: #001f3f;
+        }
+    </style>
 </head>
 <body>
     <!-- NAVIGATION BAR -->
@@ -16,6 +66,7 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="#interests">Interests</a></li>
                 <li><a href="#projects">Projects</a></li>
+                <li><a href="#game">Game</a></li>
                 <li><a href="#journal">Journal</a></li>
                 <li><a href="#mr-fish">Mr. Fish</a></li>
             </ul>
@@ -97,6 +148,26 @@
                     <p>Learning to code and create my own corner of the internet. It's WAY better than the poison they serve in the cafeteria and I'm having so much fun building it!</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- GAME SECTION -->
+    <section id="game" class="game">
+        <div class="container">
+            <h2 class="section-title">🎮 Platypus Flap Game</h2>
+            <div class="game-instructions">
+                <p><strong>Click or press SPACE to make the platypus fly!</strong></p>
+                <p>Avoid the pipes and survive as long as you can! How high can you score?</p>
+            </div>
+            <div class="game-controls">
+                <button onclick="startGame()">Start Game</button>
+                <button onclick="pauseGame()">Pause</button>
+                <button onclick="resetGame()">Reset</button>
+            </div>
+            <div class="game-info">
+                <p>Score: <strong id="scoreDisplay">0</strong> | High Score: <strong id="highScoreDisplay">0</strong></p>
+            </div>
+            <canvas id="gameCanvas" width="400" height="600"></canvas>
         </div>
     </section>
 
@@ -185,5 +256,215 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Game Variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameActive = false;
+        let gamePaused = false;
+        let score = 0;
+        let highScore = localStorage.getItem('platypusHighScore') || 0;
+        
+        // Player (Platypus)
+        const platypus = {
+            x: 50,
+            y: canvas.height / 2,
+            width: 30,
+            height: 30,
+            velocity: 0,
+            gravity: 0.6,
+            flap: -12,
+            color: '#8B4513'
+        };
+        
+        // Pipes
+        let pipes = [];
+        const pipeWidth = 60;
+        const pipeGap = 120;
+        const pipeSpeed = 4;
+        let pipeCounter = 0;
+        
+        // Initialize high score display
+        document.getElementById('highScoreDisplay').textContent = highScore;
+        
+        function startGame() {
+            if (!gameActive) {
+                gameActive = true;
+                gamePaused = false;
+                score = 0;
+                pipes = [];
+                platypus.velocity = 0;
+                platypus.y = canvas.height / 2;
+                pipeCounter = 0;
+                document.getElementById('scoreDisplay').textContent = 0;
+                gameLoop();
+            } else if (gamePaused) {
+                gamePaused = false;
+                gameLoop();
+            }
+        }
+        
+        function pauseGame() {
+            if (gameActive) {
+                gamePaused = !gamePaused;
+            }
+        }
+        
+        function resetGame() {
+            gameActive = false;
+            gamePaused = false;
+            score = 0;
+            pipes = [];
+            platypus.velocity = 0;
+            platypus.y = canvas.height / 2;
+            pipeCounter = 0;
+            document.getElementById('scoreDisplay').textContent = 0;
+            drawGame();
+        }
+        
+        function drawPlatypus() {
+            // Body
+            ctx.fillStyle = platypus.color;
+            ctx.beginPath();
+            ctx.ellipse(platypus.x, platypus.y, platypus.width / 2, platypus.height / 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Eye
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(platypus.x + 8, platypus.y - 5, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(platypus.x + 8, platypus.y - 5, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Bill (beak)
+            ctx.fillStyle = '#FFB6C1';
+            ctx.beginPath();
+            ctx.ellipse(platypus.x + 12, platypus.y + 2, 6, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        function drawPipes() {
+            ctx.fillStyle = '#228B22';
+            
+            pipes.forEach(pipe => {
+                // Top pipe
+                ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+                
+                // Bottom pipe
+                ctx.fillRect(pipe.x, pipe.top + pipeGap, pipeWidth, canvas.height - (pipe.top + pipeGap));
+            });
+        }
+        
+        function drawGame() {
+            // Clear canvas
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawPlatypus();
+            drawPipes();
+            
+            // Draw ground
+            ctx.fillStyle = '#90EE90';
+            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+        }
+        
+        function updateGame() {
+            if (gamePaused) return;
+            
+            // Apply gravity
+            platypus.velocity += platypus.gravity;
+            platypus.y += platypus.velocity;
+            
+            // Move pipes
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                pipes[i].x -= pipeSpeed;
+                
+                // Remove off-screen pipes
+                if (pipes[i].x + pipeWidth < 0) {
+                    pipes.splice(i, 1);
+                    score++;
+                    document.getElementById('scoreDisplay').textContent = score;
+                }
+            }
+            
+            // Generate new pipes
+            pipeCounter++;
+            if (pipeCounter > 90) {
+                const topHeight = Math.random() * (canvas.height - pipeGap - 100) + 50;
+                pipes.push({
+                    x: canvas.width,
+                    top: topHeight
+                });
+                pipeCounter = 0;
+            }
+            
+            // Check collisions
+            checkCollisions();
+        }
+        
+        function checkCollisions() {
+            // Ground/ceiling collision
+            if (platypus.y + platypus.height / 2 > canvas.height - 20 || platypus.y - platypus.height / 2 < 0) {
+                endGame();
+                return;
+            }
+            
+            // Pipe collision
+            for (let pipe of pipes) {
+                if (platypus.x + platypus.width / 2 > pipe.x &&
+                    platypus.x - platypus.width / 2 < pipe.x + pipeWidth) {
+                    
+                    if (platypus.y - platypus.height / 2 < pipe.top ||
+                        platypus.y + platypus.height / 2 > pipe.top + pipeGap) {
+                        endGame();
+                        return;
+                    }
+                }
+            }
+        }
+        
+        function endGame() {
+            gameActive = false;
+            
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('platypusHighScore', highScore);
+                document.getElementById('highScoreDisplay').textContent = highScore;
+                alert(`Game Over! New High Score: ${score}! 🏆`);
+            } else {
+                alert(`Game Over! Your Score: ${score}`);
+            }
+        }
+        
+        function gameLoop() {
+            if (!gameActive) return;
+            
+            updateGame();
+            drawGame();
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' && gameActive) {
+                platypus.velocity = platypus.flap;
+            }
+        });
+        
+        canvas.addEventListener('click', () => {
+            if (gameActive) {
+                platypus.velocity = platypus.flap;
+            }
+        });
+        
+        // Initial draw
+        drawGame();
+    </script>
 </body>
 </html>
