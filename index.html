@@ -274,7 +274,7 @@
             height: 30,
             velocity: 0,
             gravity: 0.6,
-            flap: -12
+            flap: -6
         };
         
         // Pipes
@@ -326,40 +326,37 @@
             // Body (yellow circle)
             ctx.fillStyle = '#FFD700';
             ctx.beginPath();
-            ctx.arc(bird.x, bird.y, bird.width / 2, 0, Math.PI * 2);
+            ctx.arc(bird.x, bird.y, 12, 0, Math.PI * 2);
             ctx.fill();
+            ctx.strokeStyle = '#FF8C00';
+            ctx.lineWidth = 2;
+            ctx.stroke();
             
             // Eye (white)
             ctx.fillStyle = 'white';
             ctx.beginPath();
-            ctx.arc(bird.x + 6, bird.y - 4, 5, 0, Math.PI * 2);
+            ctx.arc(bird.x + 5, bird.y - 3, 4, 0, Math.PI * 2);
             ctx.fill();
             
             // Eye pupil (black)
             ctx.fillStyle = 'black';
             ctx.beginPath();
-            ctx.arc(bird.x + 8, bird.y - 4, 3, 0, Math.PI * 2);
+            ctx.arc(bird.x + 6, bird.y - 3, 2, 0, Math.PI * 2);
             ctx.fill();
             
-            // Beak (orange)
+            // Beak/mouth (orange)
             ctx.fillStyle = '#FF8C00';
             ctx.beginPath();
-            ctx.moveTo(bird.x + 10, bird.y - 2);
-            ctx.lineTo(bird.x + 18, bird.y);
-            ctx.lineTo(bird.x + 10, bird.y + 2);
+            ctx.moveTo(bird.x + 8, bird.y);
+            ctx.lineTo(bird.x + 13, bird.y + 2);
+            ctx.lineTo(bird.x + 8, bird.y + 3);
             ctx.closePath();
             ctx.fill();
             
-            // Top wing
+            // Wing
             ctx.fillStyle = '#FF6347';
             ctx.beginPath();
-            ctx.ellipse(bird.x - 2, bird.y - 8, 10, 6, -0.3, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Bottom wing
-            ctx.fillStyle = '#FF6347';
-            ctx.beginPath();
-            ctx.ellipse(bird.x - 2, bird.y + 8, 10, 6, 0.3, 0, Math.PI * 2);
+            ctx.arc(bird.x - 3, bird.y, 8, 0, Math.PI * 2);
             ctx.fill();
         }
         
@@ -424,18 +421,18 @@
         
         function checkCollisions() {
             // Ground/ceiling collision
-            if (bird.y + bird.width / 2 > canvas.height - 20 || bird.y - bird.width / 2 < 0) {
+            if (bird.y + 12 > canvas.height - 20 || bird.y - 12 < 0) {
                 endGame();
                 return;
             }
             
             // Pipe collision
             for (let pipe of pipes) {
-                if (bird.x + bird.width / 2 > pipe.x &&
-                    bird.x - bird.width / 2 < pipe.x + pipeWidth) {
+                if (bird.x + 12 > pipe.x &&
+                    bird.x - 12 < pipe.x + pipeWidth) {
                     
-                    if (bird.y - bird.width / 2 < pipe.top ||
-                        bird.y + bird.width / 2 > pipe.top + pipeGap) {
+                    if (bird.y - 12 < pipe.top ||
+                        bird.y + 12 > pipe.top + pipeGap) {
                         endGame();
                         return;
                     }
