@@ -12,6 +12,8 @@
             border: 3px solid #001f3f;
             background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
             cursor: pointer;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
         
         .game-controls {
@@ -224,7 +226,7 @@
                     <br>
                     His laugh is a sound like a dying hyena,<br>No rhythm, no pattern, it's utterly mean-a!<br>He cackles and snorts and wheezes with glee,<br>While everyone else wishes: "Please, let him be!"<br>
                     <br>
-                    He trips down the stairs at least twice every week,<br>His coordination is laughably bleak.<br>His shoelaces untied, his shirt always untucked,<br>This boy's entire appearance is totally struck!<br>
+                    He trips down the stairs at least twice every week,<br>His shoelaces untied, his shirt always untucked,<br>This boy's entire appearance is totally struck!<br>
                     <br>
                     In gym class he's picked last, then second-to-last,<br>Because his athletic skills don't exist in the past.<br>He can't catch a ball, he can't kick, he can't run,<br>Watching him play is a laugh for everyone!<br>
                     <br>
@@ -266,23 +268,25 @@
         let score = 0;
         let highScore = localStorage.getItem('birdGameHighScore') || 0;
         
-        // Player (Bird)
+        // Pixel size for pixelated look
+        const pixelSize = 4;
+        
+        // Player (Bird) - Using pixel coordinates
         const bird = {
-            x: 50,
-            y: canvas.height / 2,
-            width: 24,
-            height: 22,
+            x: 5,  // pixel units
+            y: 20, // pixel units
+            width: 4,  // pixels
+            height: 4, // pixels
             velocity: 0,
-            gravity: 0.6,
-            flap: -6,
-            wingAngle: 0
+            gravity: 0.3,
+            flap: -5
         };
         
         // Pipes
         let pipes = [];
-        const pipeWidth = 60;
-        const pipeGap = 120;
-        const pipeSpeed = 4;
+        const pipeWidth = 15;  // pixels
+        const pipeGap = 30;    // pixels
+        const pipeSpeed = 2;   // pixels per frame
         let pipeCounter = 0;
         
         // Initialize high score display
@@ -295,7 +299,7 @@
                 score = 0;
                 pipes = [];
                 bird.velocity = 0;
-                bird.y = canvas.height / 2;
+                bird.y = 20;
                 pipeCounter = 0;
                 document.getElementById('scoreDisplay').textContent = 0;
                 gameLoop();
@@ -317,93 +321,75 @@
             score = 0;
             pipes = [];
             bird.velocity = 0;
-            bird.y = canvas.height / 2;
+            bird.y = 20;
             pipeCounter = 0;
             document.getElementById('scoreDisplay').textContent = 0;
             drawGame();
         }
         
+        // Draw a single pixel block
+        function drawPixel(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+        }
+        
+        // Draw the Flappy Bird in pixel art style
         function drawBird() {
             const bx = bird.x;
             const by = bird.y;
             
-            // Dark outline/border around the bird
-            ctx.strokeStyle = '#333333';
-            ctx.lineWidth = 2;
+            // Black outline pixels
+            // Top row
+            drawPixel(bx + 1, by, '#000');
+            drawPixel(bx + 2, by, '#000');
             
-            // Main body - yellow chubby circle
-            ctx.fillStyle = '#FFD700';
-            ctx.beginPath();
-            ctx.arc(bx, by, 10, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+            // Second row - Left white eye, yellow body, black outline
+            drawPixel(bx, by + 1, '#000');
+            drawPixel(bx + 1, by + 1, '#fff');  // Left eye
+            drawPixel(bx + 2, by + 1, '#FFD700'); // Yellow body
+            drawPixel(bx + 3, by + 1, '#000');
             
-            // Left wing - white
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            ctx.ellipse(bx - 8, by - 2, 4, 6, -0.3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+            // Third row - Yellow body, white eye, orange beak
+            drawPixel(bx, by + 2, '#000');
+            drawPixel(bx + 1, by + 2, '#FFD700'); // Yellow body
+            drawPixel(bx + 2, by + 2, '#fff');  // Right eye
+            drawPixel(bx + 3, by + 2, '#FF8C00'); // Orange beak
+            drawPixel(bx + 4, by + 2, '#000');
             
-            // Right wing - white
-            ctx.beginPath();
-            ctx.ellipse(bx - 8, by + 2, 4, 6, 0.3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+            // Fourth row - Yellow body, black pupils in eyes, orange beak
+            drawPixel(bx, by + 3, '#000');
+            drawPixel(bx + 1, by + 3, '#000');  // Black pupil
+            drawPixel(bx + 2, by + 3, '#000');  // Black pupil
+            drawPixel(bx + 3, by + 3, '#FF8C00'); // Orange beak
+            drawPixel(bx + 4, by + 3, '#000');
             
-            // Left eye - big white bulging
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            ctx.arc(bx + 3, by - 4, 4.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+            // Fifth row - Yellow body, tail
+            drawPixel(bx, by + 4, '#000');
+            drawPixel(bx + 1, by + 4, '#FFD700'); // Yellow body
+            drawPixel(bx + 2, by + 4, '#FFD700'); // Yellow body
+            drawPixel(bx + 3, by + 4, '#8B4513'); // Brown tail
             
-            // Left pupil - black
-            ctx.fillStyle = 'black';
-            ctx.beginPath();
-            ctx.arc(bx + 4, by - 4, 2.5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Right eye - big white bulging
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            ctx.arc(bx + 3, by + 4, 4.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-            
-            // Right pupil - black
-            ctx.fillStyle = 'black';
-            ctx.beginPath();
-            ctx.arc(bx + 4, by + 4, 2.5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Large orange beak pointing forward
-            ctx.fillStyle = '#FF8C00';
-            ctx.beginPath();
-            ctx.moveTo(bx + 10, by - 3);
-            ctx.lineTo(bx + 16, by);
-            ctx.lineTo(bx + 10, by + 3);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            
-            // Small tail feathers - dark brown/black
-            ctx.fillStyle = '#8B4513';
-            // Left tail feather
-            ctx.fillRect(bx - 11, by - 8, 3, 5);
-            // Right tail feather
-            ctx.fillRect(bx - 11, by + 3, 3, 5);
+            // Bottom row outline
+            drawPixel(bx + 1, by + 5, '#000');
+            drawPixel(bx + 2, by + 5, '#000');
         }
         
         function drawPipes() {
-            ctx.fillStyle = '#228B22';
-            
             pipes.forEach(pipe => {
                 // Top pipe
-                ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+                for (let x = pipe.x; x < pipe.x + pipeWidth; x++) {
+                    for (let y = 0; y < pipe.top; y++) {
+                        drawPixel(x, y, '#228B22');
+                    }
+                }
                 
                 // Bottom pipe
-                ctx.fillRect(pipe.x, pipe.top + pipeGap, pipeWidth, canvas.height - (pipe.top + pipeGap));
+                const canvasHeightPixels = canvas.height / pixelSize;
+                for (let x = pipe.x; x < pipe.x + pipeWidth; x++) {
+                    for (let y = pipe.top + pipeGap; y < canvasHeightPixels; y++) {
+                        drawPixel(x, y, '#228B22');
+                    }
+                }
             });
         }
         
@@ -427,9 +413,6 @@
             bird.velocity += bird.gravity;
             bird.y += bird.velocity;
             
-            // Animate wing
-            bird.wingAngle += 0.1;
-            
             // Move pipes
             for (let i = pipes.length - 1; i >= 0; i--) {
                 pipes[i].x -= pipeSpeed;
@@ -445,9 +428,10 @@
             // Generate new pipes
             pipeCounter++;
             if (pipeCounter > 90) {
-                const topHeight = Math.random() * (canvas.height - pipeGap - 100) + 50;
+                const canvasHeightPixels = canvas.height / pixelSize;
+                const topHeight = Math.random() * (canvasHeightPixels - pipeGap - 15) + 10;
                 pipes.push({
-                    x: canvas.width,
+                    x: canvas.width / pixelSize,
                     top: topHeight
                 });
                 pipeCounter = 0;
@@ -458,19 +442,23 @@
         }
         
         function checkCollisions() {
+            const canvasHeightPixels = canvas.height / pixelSize;
+            const groundY = canvasHeightPixels - 5;
+            
             // Ground/ceiling collision
-            if (bird.y + 10 > canvas.height - 20 || bird.y - 10 < 0) {
+            if (bird.y + bird.height > groundY || bird.y < 0) {
                 endGame();
                 return;
             }
             
             // Pipe collision
             for (let pipe of pipes) {
-                if (bird.x + 10 > pipe.x &&
-                    bird.x - 10 < pipe.x + pipeWidth) {
+                // Simple AABB collision detection
+                if (bird.x + bird.width > pipe.x &&
+                    bird.x < pipe.x + pipeWidth) {
                     
-                    if (bird.y - 10 < pipe.top ||
-                        bird.y + 10 > pipe.top + pipeGap) {
+                    if (bird.y < pipe.top ||
+                        bird.y + bird.height > pipe.top + pipeGap) {
                         endGame();
                         return;
                     }
