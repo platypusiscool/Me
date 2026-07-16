@@ -270,8 +270,8 @@
         const bird = {
             x: 50,
             y: canvas.height / 2,
-            width: 30,
-            height: 30,
+            width: 20,
+            height: 20,
             velocity: 0,
             gravity: 0.6,
             flap: -6
@@ -323,40 +323,31 @@
         }
         
         function drawBird() {
-            // Body (yellow circle)
+            // Simple yellow circle for body
             ctx.fillStyle = '#FFD700';
             ctx.beginPath();
-            ctx.arc(bird.x, bird.y, 12, 0, Math.PI * 2);
+            ctx.arc(bird.x, bird.y, 10, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = '#FF8C00';
-            ctx.lineWidth = 2;
-            ctx.stroke();
             
-            // Eye (white)
+            // White eye
             ctx.fillStyle = 'white';
             ctx.beginPath();
-            ctx.arc(bird.x + 5, bird.y - 3, 4, 0, Math.PI * 2);
+            ctx.arc(bird.x + 4, bird.y - 2, 3, 0, Math.PI * 2);
             ctx.fill();
             
-            // Eye pupil (black)
+            // Black pupil
             ctx.fillStyle = 'black';
             ctx.beginPath();
-            ctx.arc(bird.x + 6, bird.y - 3, 2, 0, Math.PI * 2);
+            ctx.arc(bird.x + 5, bird.y - 2, 1.5, 0, Math.PI * 2);
             ctx.fill();
             
-            // Beak/mouth (orange)
+            // Small orange beak
             ctx.fillStyle = '#FF8C00';
             ctx.beginPath();
             ctx.moveTo(bird.x + 8, bird.y);
-            ctx.lineTo(bird.x + 13, bird.y + 2);
-            ctx.lineTo(bird.x + 8, bird.y + 3);
+            ctx.lineTo(bird.x + 12, bird.y);
+            ctx.lineTo(bird.x + 8, bird.y + 2);
             ctx.closePath();
-            ctx.fill();
-            
-            // Wing
-            ctx.fillStyle = '#FF6347';
-            ctx.beginPath();
-            ctx.arc(bird.x - 3, bird.y, 8, 0, Math.PI * 2);
             ctx.fill();
         }
         
@@ -421,18 +412,18 @@
         
         function checkCollisions() {
             // Ground/ceiling collision
-            if (bird.y + 12 > canvas.height - 20 || bird.y - 12 < 0) {
+            if (bird.y + 10 > canvas.height - 20 || bird.y - 10 < 0) {
                 endGame();
                 return;
             }
             
             // Pipe collision
             for (let pipe of pipes) {
-                if (bird.x + 12 > pipe.x &&
-                    bird.x - 12 < pipe.x + pipeWidth) {
+                if (bird.x + 10 > pipe.x &&
+                    bird.x - 10 < pipe.x + pipeWidth) {
                     
-                    if (bird.y - 12 < pipe.top ||
-                        bird.y + 12 > pipe.top + pipeGap) {
+                    if (bird.y - 10 < pipe.top ||
+                        bird.y + 10 > pipe.top + pipeGap) {
                         endGame();
                         return;
                     }
