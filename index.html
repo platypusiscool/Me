@@ -9,8 +9,10 @@
         #gameCanvas {
             display: block;
             margin: 20px auto;
-            border: 3px solid #001f3f;
-            background: linear-gradient(to bottom, #4A90C8 0%, #87CEEB 65%, #B0D8E8 100%);
+            border: 4px solid #1b3f72;
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(8, 32, 66, 0.35);
+            background: linear-gradient(to bottom, #66b8ff 0%, #8fd3ff 50%, #d8efff 100%);
             cursor: pointer;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
@@ -18,7 +20,7 @@
         }
         
         #flyBtn {
-            background-color: #4fb3d9;
+            background: linear-gradient(135deg, #0f5fb3, #2f8de0);
             color: white;
             border: none;
             padding: 14px 44px;
@@ -32,7 +34,7 @@
         }
         
         #flyBtn:hover, #flyBtn:active {
-            background-color: #2a8ab8;
+            background: linear-gradient(135deg, #0d4f94, #287bc4);
         }
         
         .game-controls {
@@ -41,7 +43,7 @@
         }
         
         .game-controls button {
-            background-color: #4fb3d9;
+            background: linear-gradient(135deg, #2f8de0, #0f5fb3);
             color: white;
             border: none;
             padding: 10px 20px;
@@ -53,7 +55,7 @@
         }
         
         .game-controls button:hover {
-            background-color: #2a8ab8;
+            background: linear-gradient(135deg, #287bc4, #0d4f94);
         }
         
         .game-info {
@@ -68,12 +70,13 @@
         }
         
         .game-instructions {
-            background-color: #f0f8ff;
+            background: linear-gradient(135deg, #e7f4ff, #d7ebff);
             padding: 15px;
             border-radius: 5px;
             margin: 20px 0;
             text-align: center;
             color: #001f3f;
+            border: 2px solid #9ec6ed;
         }
     </style>
 </head>
@@ -175,10 +178,10 @@
     <!-- GAME SECTION -->
     <section id="game" class="game">
         <div class="container">
-            <h2 class="section-title">✈️ Flappy Airplane</h2>
+            <h2 class="section-title">✈️ Flappy Airplane: Runway Rush</h2>
             <div class="game-instructions">
-                <p><strong>Click or press SPACE to keep the airplane flying!</strong></p>
-                <p>Dodge the obstacles and survive as long as you can! How high can you score?</p>
+                <p><strong>Click or press SPACE to pull up and stay in the flight corridor!</strong></p>
+                <p>Thread between no-fly towers and keep your airplane in the sky as long as you can.</p>
             </div>
             <div class="game-controls">
                 <button onclick="startGame()">Start Game</button>
@@ -189,7 +192,7 @@
                 <p>Score: <strong id="scoreDisplay">0</strong> | High Score: <strong id="highScoreDisplay">0</strong></p>
             </div>
             <canvas id="gameCanvas" width="400" height="600"></canvas>
-            <button id="flyBtn" ontouchstart="flapAirplane()" onclick="flapAirplane()">✈️ TAP TO FLY</button>
+            <button id="flyBtn" ontouchstart="flapAirplane()" onclick="flapAirplane()">✈️ PULL UP</button>
         </div>
     </section>
 
@@ -385,6 +388,14 @@
             ctx.rotate(tilt);
             ctx.translate(-(px + u * 5), -(py + u * 2));
             
+            // Contrail
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(px - u * 2, py + u * 2);
+            ctx.lineTo(px, py + u * 2);
+            ctx.stroke();
+            
             // Main fuselage
             ctx.fillStyle = '#EBEBF0';
             ctx.fillRect(px, py + u, u * 8, u * 2);
@@ -429,6 +440,14 @@
             ctx.fillStyle = '#4A7FD4';
             ctx.fillRect(px + u * 6, py + u + 2, u * 2 - 2, u * 2 - 2);
             
+            // Red tail stripe
+            ctx.fillStyle = '#df3f4a';
+            ctx.fillRect(px + u, py + u, u, u * 2);
+            
+            // Wing tip light
+            ctx.fillStyle = '#ffd34a';
+            ctx.fillRect(px + u * 6, py + u * 5, u / 2, u / 2);
+            
             ctx.restore();
         }
         
@@ -440,30 +459,48 @@
                 const bottomH = canvas.height - bottomY;
                 const ow = pipeWidth * pixelSize;
                 
-                // Top cloud bank (dense blue-gray)
-                ctx.fillStyle = '#C8DCF0';
+                // Top no-fly tower
+                ctx.fillStyle = '#6f8096';
                 ctx.fillRect(ox, 0, ow, topH);
-                // Fluffy bottom edge of top bank
-                ctx.fillStyle = '#EEF5FC';
+                // Warning stripe at tower base
+                ctx.fillStyle = '#ffb347';
                 ctx.fillRect(ox, topH - pixelSize * 4, ow, pixelSize * 4);
+                ctx.fillStyle = '#df3f4a';
+                ctx.fillRect(ox, topH - pixelSize * 2, ow, pixelSize * 2);
+                ctx.fillStyle = '#ffd34a';
+                ctx.beginPath();
+                ctx.arc(ox + ow / 2, topH - pixelSize * 5, pixelSize, 0, Math.PI * 2);
+                ctx.fill();
                 
-                // Bottom cloud bank
-                ctx.fillStyle = '#C8DCF0';
+                // Bottom no-fly tower
+                ctx.fillStyle = '#6f8096';
                 ctx.fillRect(ox, bottomY, ow, bottomH);
-                // Fluffy top edge of bottom bank
-                ctx.fillStyle = '#EEF5FC';
+                // Warning stripe at tower top
+                ctx.fillStyle = '#ffb347';
                 ctx.fillRect(ox, bottomY, ow, pixelSize * 4);
+                ctx.fillStyle = '#df3f4a';
+                ctx.fillRect(ox, bottomY + pixelSize * 2, ow, pixelSize * 2);
+                ctx.fillStyle = '#ffd34a';
+                ctx.beginPath();
+                ctx.arc(ox + ow / 2, bottomY + pixelSize * 5, pixelSize, 0, Math.PI * 2);
+                ctx.fill();
             });
         }
         
         function drawGame() {
             // Sky gradient background
             const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            skyGrad.addColorStop(0, '#4A90C8');
-            skyGrad.addColorStop(0.65, '#87CEEB');
-            skyGrad.addColorStop(1, '#B0D8E8');
+            skyGrad.addColorStop(0, '#66b8ff');
+            skyGrad.addColorStop(0.6, '#8fd3ff');
+            skyGrad.addColorStop(1, '#d8efff');
             ctx.fillStyle = skyGrad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Sun
+            ctx.fillStyle = '#ffe88a';
+            ctx.beginPath();
+            ctx.arc(canvas.width - 70, 70, 28, 0, Math.PI * 2);
+            ctx.fill();
             
             // Decorative background clouds
             bgClouds.forEach(c => drawCloudPuff(c[0], c[1]));
@@ -471,9 +508,13 @@
             drawObstacles();
             drawAirplane();
             
-            // Ground strip (earth seen from altitude)
-            ctx.fillStyle = '#8B7355';
-            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+            // Runway strip
+            ctx.fillStyle = '#4a596d';
+            ctx.fillRect(0, canvas.height - 26, canvas.width, 26);
+            ctx.fillStyle = '#f7f7f7';
+            for (let x = 0; x < canvas.width; x += 28) {
+                ctx.fillRect(x + 6, canvas.height - 14, 14, 4);
+            }
         }
         
         function updateGame() {
