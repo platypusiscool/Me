@@ -156,10 +156,10 @@
     <!-- GAME SECTION -->
     <section id="game" class="game">
         <div class="container">
-            <h2 class="section-title">🎮 Flappy Bird Game</h2>
+            <h2 class="section-title">✈️ Flappy Airplane</h2>
             <div class="game-instructions">
-                <p><strong>Click or press SPACE to make the bird fly!</strong></p>
-                <p>Avoid the pipes and survive as long as you can! How high can you score?</p>
+                <p><strong>Click or press SPACE to keep the airplane flying!</strong></p>
+                <p>Dodge the obstacles and survive as long as you can! How high can you score?</p>
             </div>
             <div class="game-controls">
                 <button onclick="startGame()">Start Game</button>
@@ -266,12 +266,12 @@
         let gameActive = false;
         let gamePaused = false;
         let score = 0;
-        let highScore = localStorage.getItem('birdGameHighScore') || 0;
+        let highScore = localStorage.getItem('airplaneGameHighScore') || 0;
         
         // Pixel size for pixelated look
         const pixelSize = 4;
         
-        // Player (Bird) - Using pixel coordinates
+        // Player (Airplane) - Using pixel coordinates
         const bird = {
             x: 5,  // pixel units
             y: 20, // pixel units
@@ -333,61 +333,54 @@
             ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
         }
         
-        // Draw the Flappy Bird in pixel art style
-        function drawBird() {
+        // Draw the Flappy Airplane in pixel art style (nose faces right, tail on left)
+        function drawAirplane() {
             const bx = bird.x;
             const by = bird.y;
             
-            // Black outline pixels
-            // Top row
-            drawPixel(bx + 1, by, '#000');
-            drawPixel(bx + 2, by, '#000');
+            // Upper tail fin
+            drawPixel(bx, by, '#A0A0A0');
             
-            // Second row - Left white eye, yellow body, black outline
-            drawPixel(bx, by + 1, '#000');
-            drawPixel(bx + 1, by + 1, '#fff');  // Left eye
-            drawPixel(bx + 2, by + 1, '#FFD700'); // Yellow body
-            drawPixel(bx + 3, by + 1, '#000');
+            // Fuselage row 1
+            drawPixel(bx,     by + 1, '#A0A0A0'); // tail fin
+            drawPixel(bx + 1, by + 1, '#F5F5F5'); // fuselage
+            drawPixel(bx + 2, by + 1, '#F5F5F5'); // fuselage
+            drawPixel(bx + 3, by + 1, '#4169E1'); // window (blue)
+            drawPixel(bx + 4, by + 1, '#F5F5F5'); // fuselage
+            drawPixel(bx + 5, by + 1, '#808080'); // nose tip
             
-            // Third row - Yellow body, white eye, orange beak
-            drawPixel(bx, by + 2, '#000');
-            drawPixel(bx + 1, by + 2, '#FFD700'); // Yellow body
-            drawPixel(bx + 2, by + 2, '#fff');  // Right eye
-            drawPixel(bx + 3, by + 2, '#FF8C00'); // Orange beak
-            drawPixel(bx + 4, by + 2, '#000');
+            // Fuselage row 2
+            drawPixel(bx,     by + 2, '#A0A0A0'); // tail fin
+            drawPixel(bx + 1, by + 2, '#F5F5F5'); // fuselage
+            drawPixel(bx + 2, by + 2, '#F5F5F5'); // fuselage
+            drawPixel(bx + 3, by + 2, '#4169E1'); // window (blue)
+            drawPixel(bx + 4, by + 2, '#F5F5F5'); // fuselage
+            drawPixel(bx + 5, by + 2, '#808080'); // nose tip
             
-            // Fourth row - Yellow body, black pupils in eyes, orange beak
-            drawPixel(bx, by + 3, '#000');
-            drawPixel(bx + 1, by + 3, '#000');  // Black pupil
-            drawPixel(bx + 2, by + 3, '#000');  // Black pupil
-            drawPixel(bx + 3, by + 3, '#FF8C00'); // Orange beak
-            drawPixel(bx + 4, by + 3, '#000');
+            // Lower tail fin
+            drawPixel(bx, by + 3, '#A0A0A0');
             
-            // Fifth row - Yellow body, tail
-            drawPixel(bx, by + 4, '#000');
-            drawPixel(bx + 1, by + 4, '#FFD700'); // Yellow body
-            drawPixel(bx + 2, by + 4, '#FFD700'); // Yellow body
-            drawPixel(bx + 3, by + 4, '#8B4513'); // Brown tail
-            
-            // Bottom row outline
-            drawPixel(bx + 1, by + 5, '#000');
-            drawPixel(bx + 2, by + 5, '#000');
+            // Main wing
+            drawPixel(bx + 1, by + 3, '#B8CDE8'); // wing
+            drawPixel(bx + 2, by + 3, '#B8CDE8'); // wing
+            drawPixel(bx + 3, by + 3, '#B8CDE8'); // wing
+            drawPixel(bx + 4, by + 3, '#B8CDE8'); // wing
         }
         
         function drawPipes() {
             pipes.forEach(pipe => {
-                // Top pipe
+                // Top obstacle
                 for (let x = pipe.x; x < pipe.x + pipeWidth; x++) {
                     for (let y = 0; y < pipe.top; y++) {
-                        drawPixel(x, y, '#228B22');
+                        drawPixel(x, y, '#5A7A9A');
                     }
                 }
                 
-                // Bottom pipe
+                // Bottom obstacle
                 const canvasHeightPixels = canvas.height / pixelSize;
                 for (let x = pipe.x; x < pipe.x + pipeWidth; x++) {
                     for (let y = pipe.top + pipeGap; y < canvasHeightPixels; y++) {
-                        drawPixel(x, y, '#228B22');
+                        drawPixel(x, y, '#5A7A9A');
                     }
                 }
             });
@@ -398,11 +391,11 @@
             ctx.fillStyle = '#87CEEB';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            drawBird();
+            drawAirplane();
             drawPipes();
             
-            // Draw ground
-            ctx.fillStyle = '#90EE90';
+            // Draw ground (earth seen from altitude)
+            ctx.fillStyle = '#8B7355';
             ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
         }
         
@@ -471,7 +464,7 @@
             
             if (score > highScore) {
                 highScore = score;
-                localStorage.setItem('birdGameHighScore', highScore);
+                localStorage.setItem('airplaneGameHighScore', highScore);
                 document.getElementById('highScoreDisplay').textContent = highScore;
                 alert(`Game Over! New High Score: ${score}! 🏆`);
             } else {
