@@ -10,10 +10,29 @@
             display: block;
             margin: 20px auto;
             border: 3px solid #001f3f;
-            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            background: linear-gradient(to bottom, #4A90C8 0%, #87CEEB 65%, #B0D8E8 100%);
             cursor: pointer;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+            touch-action: none;
+        }
+        
+        #flyBtn {
+            background-color: #4fb3d9;
+            color: white;
+            border: none;
+            padding: 14px 44px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            touch-action: manipulation;
+            display: block;
+            margin: 10px auto 0;
+        }
+        
+        #flyBtn:hover, #flyBtn:active {
+            background-color: #2a8ab8;
         }
         
         .game-controls {
@@ -170,6 +189,7 @@
                 <p>Score: <strong id="scoreDisplay">0</strong> | High Score: <strong id="highScoreDisplay">0</strong></p>
             </div>
             <canvas id="gameCanvas" width="400" height="600"></canvas>
+            <button id="flyBtn" ontouchstart="flapAirplane()" onclick="flapAirplane()">✈️ TAP TO FLY</button>
         </div>
     </section>
 
@@ -275,19 +295,26 @@
         const bird = {
             x: 5,  // pixel units
             y: 20, // pixel units
-            width: 4,  // pixels
-            height: 4, // pixels
+            width: 10, // pixels
+            height: 5, // pixels
             velocity: 0,
             gravity: 0.3,
             flap: -5
         };
         
-        // Pipes
+        // Obstacles (reusing "pipes" data structure)
         let pipes = [];
         const pipeWidth = 15;  // pixels
         const pipeGap = 30;    // pixels
         const pipeSpeed = 2;   // pixels per frame
         let pipeCounter = 0;
+        
+        // Background cloud positions [x, y] in pixel units
+        const bgClouds = [
+            [8, 6], [30, 15], [58, 7], [75, 22],
+            [18, 28], [45, 35], [82, 12], [5, 42],
+            [62, 28], [38, 9]
+        ];
         
         // Initialize high score display
         document.getElementById('highScoreDisplay').textContent = highScore;
@@ -333,68 +360,118 @@
             ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
         }
         
-        // Draw the Flappy Airplane in pixel art style (nose faces right, tail on left)
-        function drawAirplane() {
-            const bx = bird.x;
-            const by = bird.y;
-            
-            // Upper tail fin
-            drawPixel(bx, by, '#A0A0A0');
-            
-            // Fuselage row 1
-            drawPixel(bx,     by + 1, '#A0A0A0'); // tail fin
-            drawPixel(bx + 1, by + 1, '#F5F5F5'); // fuselage
-            drawPixel(bx + 2, by + 1, '#F5F5F5'); // fuselage
-            drawPixel(bx + 3, by + 1, '#4169E1'); // window (blue)
-            drawPixel(bx + 4, by + 1, '#F5F5F5'); // fuselage
-            drawPixel(bx + 5, by + 1, '#808080'); // nose tip
-            
-            // Fuselage row 2
-            drawPixel(bx,     by + 2, '#A0A0A0'); // tail fin
-            drawPixel(bx + 1, by + 2, '#F5F5F5'); // fuselage
-            drawPixel(bx + 2, by + 2, '#F5F5F5'); // fuselage
-            drawPixel(bx + 3, by + 2, '#4169E1'); // window (blue)
-            drawPixel(bx + 4, by + 2, '#F5F5F5'); // fuselage
-            drawPixel(bx + 5, by + 2, '#808080'); // nose tip
-            
-            // Lower tail fin
-            drawPixel(bx, by + 3, '#A0A0A0');
-            
-            // Main wing
-            drawPixel(bx + 1, by + 3, '#B8CDE8'); // wing
-            drawPixel(bx + 2, by + 3, '#B8CDE8'); // wing
-            drawPixel(bx + 3, by + 3, '#B8CDE8'); // wing
-            drawPixel(bx + 4, by + 3, '#B8CDE8'); // wing
+        // Draw a decorative cloud puff at pixel-unit coordinates
+        function drawCloudPuff(cx, cy) {
+            const x = cx * pixelSize;
+            const y = cy * pixelSize;
+            const r = pixelSize * 3;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+            ctx.beginPath(); ctx.arc(x,           y,           r,       0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x + r * 1.3, y - r * 0.4, r * 0.8, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x + r * 2.3, y,           r * 0.7, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x + r * 0.7, y - r * 0.8, r * 0.7, 0, Math.PI * 2); ctx.fill();
         }
         
-        function drawPipes() {
+        // Draw the airplane using canvas API (nose faces right, tail on left)
+        function drawAirplane() {
+            const px = bird.x * pixelSize;
+            const py = bird.y * pixelSize;
+            const u = pixelSize; // 4 canvas px per unit
+            
+            ctx.save();
+            // Tilt: nose up when rising (negative velocity), nose down when falling
+            const tilt = Math.max(-0.45, Math.min(0.45, bird.velocity * 0.07));
+            ctx.translate(px + u * 5, py + u * 2);
+            ctx.rotate(tilt);
+            ctx.translate(-(px + u * 5), -(py + u * 2));
+            
+            // Main fuselage
+            ctx.fillStyle = '#EBEBF0';
+            ctx.fillRect(px, py + u, u * 8, u * 2);
+            
+            // Nose cone (pointed right)
+            ctx.fillStyle = '#C0C0C8';
+            ctx.beginPath();
+            ctx.moveTo(px + u * 8, py + u);
+            ctx.lineTo(px + u * 10, py + u * 2);
+            ctx.lineTo(px + u * 8, py + u * 3);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Upper tail fin
+            ctx.fillStyle = '#B8B8C0';
+            ctx.beginPath();
+            ctx.moveTo(px,         py + u);
+            ctx.lineTo(px + u * 2, py + u);
+            ctx.lineTo(px + u,     py);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Horizontal stabilizer
+            ctx.fillStyle = '#C8D4E0';
+            ctx.fillRect(px, py + u * 3, u * 3, u);
+            
+            // Main wing (swept back)
+            ctx.fillStyle = '#A8C8E8';
+            ctx.beginPath();
+            ctx.moveTo(px + u * 3, py + u * 3);
+            ctx.lineTo(px + u * 6, py + u * 3);
+            ctx.lineTo(px + u * 5, py + u * 5);
+            ctx.lineTo(px + u * 2, py + u * 5);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Engine pod
+            ctx.fillStyle = '#909098';
+            ctx.fillRect(px + u * 3, py + u * 4, u * 2, u);
+            
+            // Cockpit window
+            ctx.fillStyle = '#4A7FD4';
+            ctx.fillRect(px + u * 6, py + u + 2, u * 2 - 2, u * 2 - 2);
+            
+            ctx.restore();
+        }
+        
+        function drawObstacles() {
             pipes.forEach(pipe => {
-                // Top obstacle
-                for (let x = pipe.x; x < pipe.x + pipeWidth; x++) {
-                    for (let y = 0; y < pipe.top; y++) {
-                        drawPixel(x, y, '#5A7A9A');
-                    }
-                }
+                const ox = pipe.x * pixelSize;
+                const topH = pipe.top * pixelSize;
+                const bottomY = (pipe.top + pipeGap) * pixelSize;
+                const bottomH = canvas.height - bottomY;
+                const ow = pipeWidth * pixelSize;
                 
-                // Bottom obstacle
-                const canvasHeightPixels = canvas.height / pixelSize;
-                for (let x = pipe.x; x < pipe.x + pipeWidth; x++) {
-                    for (let y = pipe.top + pipeGap; y < canvasHeightPixels; y++) {
-                        drawPixel(x, y, '#5A7A9A');
-                    }
-                }
+                // Top cloud bank (dense blue-gray)
+                ctx.fillStyle = '#C8DCF0';
+                ctx.fillRect(ox, 0, ow, topH);
+                // Fluffy bottom edge of top bank
+                ctx.fillStyle = '#EEF5FC';
+                ctx.fillRect(ox, topH - pixelSize * 4, ow, pixelSize * 4);
+                
+                // Bottom cloud bank
+                ctx.fillStyle = '#C8DCF0';
+                ctx.fillRect(ox, bottomY, ow, bottomH);
+                // Fluffy top edge of bottom bank
+                ctx.fillStyle = '#EEF5FC';
+                ctx.fillRect(ox, bottomY, ow, pixelSize * 4);
             });
         }
         
         function drawGame() {
-            // Clear canvas
-            ctx.fillStyle = '#87CEEB';
+            // Sky gradient background
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            skyGrad.addColorStop(0, '#4A90C8');
+            skyGrad.addColorStop(0.65, '#87CEEB');
+            skyGrad.addColorStop(1, '#B0D8E8');
+            ctx.fillStyle = skyGrad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            drawAirplane();
-            drawPipes();
+            // Decorative background clouds
+            bgClouds.forEach(c => drawCloudPuff(c[0], c[1]));
             
-            // Draw ground (earth seen from altitude)
+            drawObstacles();
+            drawAirplane();
+            
+            // Ground strip (earth seen from altitude)
             ctx.fillStyle = '#8B7355';
             ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
         }
@@ -481,6 +558,12 @@
             requestAnimationFrame(gameLoop);
         }
         
+        function flapAirplane() {
+            if (gameActive) {
+                bird.velocity = bird.flap;
+            }
+        }
+        
         // Event listeners
         document.addEventListener('keydown', (e) => {
             if (e.key === ' ' && gameActive) {
@@ -493,6 +576,13 @@
                 bird.velocity = bird.flap;
             }
         });
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (gameActive) {
+                bird.velocity = bird.flap;
+            }
+        }, { passive: false });
         
         // Initial draw
         drawGame();
