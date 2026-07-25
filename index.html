@@ -186,7 +186,7 @@
             <div class="game-info">
                 <p>Score: <strong id="scoreDisplay">0</strong> | High Score: <strong id="highScoreDisplay">0</strong></p>
             </div>
-            <canvas id="gameCanvas" width="400" height="600"></canvas>
+            <canvas id="gameCanvas" width="700" height="400"></canvas>
             <button id="flyBtn" ontouchstart="flapAirplane()" onclick="flapAirplane()">✈️ TAP TO FLY</button>
         </div>
     </section>
@@ -303,7 +303,7 @@
         // Pipes
         let pipes = [];
         const pipeWidth = 15;  // pixels
-        const pipeGap = 30;    // pixels
+        const pipeGap = 34;    // pixels
         const pipeSpeed = 2;   // pixels per frame
         let pipeCounter = 0;
         
@@ -379,6 +379,9 @@
             const tilt = Math.max(-0.45, Math.min(0.45, bird.velocity * 0.07));
             ctx.translate(px + u * 5, py + u * 2);
             ctx.rotate(tilt);
+            ctx.translate(-(px + u * 5), -(py + u * 2));
+            ctx.translate(px + u * 5, py + u * 2);
+            ctx.scale(-1, 1);
             ctx.translate(-(px + u * 5), -(py + u * 2));
 
             // Fuselage
