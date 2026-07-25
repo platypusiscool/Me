@@ -12,6 +12,7 @@
             border: 3px solid #001f3f;
             background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
             cursor: pointer;
+            touch-action: none;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
         }
@@ -156,15 +157,16 @@
     <!-- GAME SECTION -->
     <section id="game" class="game">
         <div class="container">
-            <h2 class="section-title">🎮 Flappy Bird Game</h2>
+            <h2 class="section-title">✈️ Flappy Airplane</h2>
             <div class="game-instructions">
-                <p><strong>Click or press SPACE to make the bird fly!</strong></p>
-                <p>Avoid the pipes and survive as long as you can! How high can you score?</p>
+                <p><strong>Click, tap, or press SPACE to keep the airplane in the air!</strong></p>
+                <p>Glide through the cloud gaps, dodge the storm banks, and see how far your flight can go!</p>
             </div>
             <div class="game-controls">
                 <button onclick="startGame()">Start Game</button>
                 <button onclick="pauseGame()">Pause</button>
                 <button onclick="resetGame()">Reset</button>
+                <button onclick="flapAirplane()" ontouchstart="flapAirplane()">Tap to Fly</button>
             </div>
             <div class="game-info">
                 <p>Score: <strong id="scoreDisplay">0</strong> | High Score: <strong id="highScoreDisplay">0</strong></p>
@@ -266,16 +268,16 @@
         let gameActive = false;
         let gamePaused = false;
         let score = 0;
-        let highScore = localStorage.getItem('birdGameHighScore') || 0;
+        let highScore = localStorage.getItem('airplaneGameHighScore') || 0;
         
         // Pixel size for pixelated look
         const pixelSize = 4;
         
-        // Player (Bird) - Using pixel coordinates
+        // Player airplane - using pixel coordinates
         const bird = {
             x: 5,  // pixel units
             y: 20, // pixel units
-            width: 4,  // pixels
+            width: 8,  // pixels
             height: 4, // pixels
             velocity: 0,
             gravity: 0.3,
@@ -326,6 +328,12 @@
             document.getElementById('scoreDisplay').textContent = 0;
             drawGame();
         }
+
+        function flapAirplane() {
+            if (gameActive && !gamePaused) {
+                bird.velocity = bird.flap;
+            }
+        }
         
         // Draw a single pixel block
         function drawPixel(x, y, color) {
@@ -333,77 +341,83 @@
             ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
         }
         
-        // Draw the Flappy Bird in pixel art style
+        // Draw the airplane in pixel art style
         function drawBird() {
             const bx = bird.x;
             const by = bird.y;
-            
-            // Black outline pixels
-            // Top row
-            drawPixel(bx + 1, by, '#000');
-            drawPixel(bx + 2, by, '#000');
-            
-            // Second row - Left white eye, yellow body, black outline
-            drawPixel(bx, by + 1, '#000');
-            drawPixel(bx + 1, by + 1, '#fff');  // Left eye
-            drawPixel(bx + 2, by + 1, '#FFD700'); // Yellow body
-            drawPixel(bx + 3, by + 1, '#000');
-            
-            // Third row - Yellow body, white eye, orange beak
-            drawPixel(bx, by + 2, '#000');
-            drawPixel(bx + 1, by + 2, '#FFD700'); // Yellow body
-            drawPixel(bx + 2, by + 2, '#fff');  // Right eye
-            drawPixel(bx + 3, by + 2, '#FF8C00'); // Orange beak
-            drawPixel(bx + 4, by + 2, '#000');
-            
-            // Fourth row - Yellow body, black pupils in eyes, orange beak
-            drawPixel(bx, by + 3, '#000');
-            drawPixel(bx + 1, by + 3, '#000');  // Black pupil
-            drawPixel(bx + 2, by + 3, '#000');  // Black pupil
-            drawPixel(bx + 3, by + 3, '#FF8C00'); // Orange beak
-            drawPixel(bx + 4, by + 3, '#000');
-            
-            // Fifth row - Yellow body, tail
-            drawPixel(bx, by + 4, '#000');
-            drawPixel(bx + 1, by + 4, '#FFD700'); // Yellow body
-            drawPixel(bx + 2, by + 4, '#FFD700'); // Yellow body
-            drawPixel(bx + 3, by + 4, '#8B4513'); // Brown tail
-            
-            // Bottom row outline
-            drawPixel(bx + 1, by + 5, '#000');
-            drawPixel(bx + 2, by + 5, '#000');
+
+            drawPixel(bx + 1, by, '#1B3C73');
+            drawPixel(bx + 2, by, '#1B3C73');
+            drawPixel(bx + 3, by, '#1B3C73');
+            drawPixel(bx + 4, by, '#1B3C73');
+
+            drawPixel(bx, by + 1, '#1B3C73');
+            drawPixel(bx + 1, by + 1, '#D8EAF7');
+            drawPixel(bx + 2, by + 1, '#4FB3D9');
+            drawPixel(bx + 3, by + 1, '#4FB3D9');
+            drawPixel(bx + 4, by + 1, '#4FB3D9');
+            drawPixel(bx + 5, by + 1, '#4FB3D9');
+            drawPixel(bx + 6, by + 1, '#D8EAF7');
+            drawPixel(bx + 7, by + 1, '#1B3C73');
+
+            drawPixel(bx, by + 2, '#1B3C73');
+            drawPixel(bx + 1, by + 2, '#4FB3D9');
+            drawPixel(bx + 2, by + 2, '#4FB3D9');
+            drawPixel(bx + 3, by + 2, '#F7FBFF');
+            drawPixel(bx + 4, by + 2, '#4FB3D9');
+            drawPixel(bx + 5, by + 2, '#4FB3D9');
+            drawPixel(bx + 6, by + 2, '#FF7B54');
+            drawPixel(bx + 7, by + 2, '#1B3C73');
+
+            drawPixel(bx + 1, by + 3, '#1B3C73');
+            drawPixel(bx + 2, by + 3, '#1B3C73');
+            drawPixel(bx + 3, by + 3, '#4FB3D9');
+            drawPixel(bx + 4, by + 3, '#4FB3D9');
+            drawPixel(bx + 5, by + 3, '#1B3C73');
+            drawPixel(bx + 6, by + 3, '#1B3C73');
         }
         
         function drawPipes() {
             pipes.forEach(pipe => {
-                // Top pipe
                 for (let x = pipe.x; x < pipe.x + pipeWidth; x++) {
                     for (let y = 0; y < pipe.top; y++) {
-                        drawPixel(x, y, '#228B22');
+                        drawPixel(x, y, x % 4 === 0 ? '#FFFFFF' : '#D7ECFF');
                     }
                 }
                 
-                // Bottom pipe
                 const canvasHeightPixels = canvas.height / pixelSize;
                 for (let x = pipe.x; x < pipe.x + pipeWidth; x++) {
                     for (let y = pipe.top + pipeGap; y < canvasHeightPixels; y++) {
-                        drawPixel(x, y, '#228B22');
+                        drawPixel(x, y, x % 4 === 0 ? '#FFFFFF' : '#D7ECFF');
                     }
                 }
             });
         }
         
         function drawGame() {
-            // Clear canvas
-            ctx.fillStyle = '#87CEEB';
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            skyGradient.addColorStop(0, '#87CEEB');
+            skyGradient.addColorStop(1, '#EAF7FF');
+            ctx.fillStyle = skyGradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#FFF6B3';
+            ctx.beginPath();
+            ctx.arc(325, 80, 36, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.fillRect(60, 90, 70, 24);
+            ctx.fillRect(250, 150, 90, 28);
+            ctx.fillRect(120, 230, 60, 20);
             
             drawBird();
             drawPipes();
             
-            // Draw ground
-            ctx.fillStyle = '#90EE90';
+            ctx.fillStyle = '#5B7C99';
             ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+            ctx.fillStyle = '#8AA6BF';
+            ctx.fillRect(0, canvas.height - 20, canvas.width, 4);
         }
         
         function updateGame() {
@@ -451,7 +465,7 @@
                 return;
             }
             
-            // Pipe collision
+            // Obstacle collision
             for (let pipe of pipes) {
                 // Simple AABB collision detection
                 if (bird.x + bird.width > pipe.x &&
@@ -471,11 +485,11 @@
             
             if (score > highScore) {
                 highScore = score;
-                localStorage.setItem('birdGameHighScore', highScore);
+                localStorage.setItem('airplaneGameHighScore', highScore);
                 document.getElementById('highScoreDisplay').textContent = highScore;
-                alert(`Game Over! New High Score: ${score}! 🏆`);
+                alert(`Flight Over! New High Score: ${score}! 🏆`);
             } else {
-                alert(`Game Over! Your Score: ${score}`);
+                alert(`Flight Over! Your Score: ${score}`);
             }
         }
         
@@ -490,15 +504,19 @@
         
         // Event listeners
         document.addEventListener('keydown', (e) => {
-            if (e.key === ' ' && gameActive) {
-                bird.velocity = bird.flap;
+            if ((e.key === ' ' || e.key === 'ArrowUp') && gameActive) {
+                e.preventDefault();
+                flapAirplane();
             }
         });
         
         canvas.addEventListener('click', () => {
-            if (gameActive) {
-                bird.velocity = bird.flap;
-            }
+            flapAirplane();
+        });
+
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            flapAirplane();
         });
         
         // Initial draw
