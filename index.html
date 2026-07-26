@@ -8,7 +8,7 @@
     <style>
         #gameCanvas {
             display: block;
-            margin: 20px auto;
+            margin: 10px auto 0;
             border: 3px solid #001f3f;
             background: linear-gradient(to bottom, #4A90C8 0%, #87CEEB 65%, #B0D8E8 100%);
             cursor: pointer;
@@ -35,7 +35,7 @@
         
         .game-controls {
             text-align: center;
-            margin: 20px 0;
+            margin: 8px 0 0;
         }
         
         .game-controls button {
@@ -58,7 +58,7 @@
             text-align: center;
             font-size: 1.2rem;
             color: #001f3f;
-            margin: 15px 0;
+            margin: 8px 0 0;
         }
         
         .game-info strong {
@@ -178,16 +178,16 @@
                 <p><strong>Click, tap, or press SPACE to keep the airplane in the air!</strong></p>
                 <p>Glide through the cloud gaps, dodge the storm banks, and see how far your flight can go!</p>
             </div>
+            <canvas id="gameCanvas" width="700" height="400"></canvas>
+            <div class="game-info">
+                <p>Score: <strong id="scoreDisplay">0</strong> | High Score: <strong id="highScoreDisplay">0</strong></p>
+            </div>
+            <button id="flyBtn" ontouchstart="flapAirplane()" onclick="flapAirplane()">✈️ TAP TO FLY</button>
             <div class="game-controls">
                 <button onclick="startGame()">Start Game</button>
                 <button onclick="pauseGame()">Pause</button>
                 <button onclick="resetGame()">Reset</button>
             </div>
-            <div class="game-info">
-                <p>Score: <strong id="scoreDisplay">0</strong> | High Score: <strong id="highScoreDisplay">0</strong></p>
-            </div>
-            <canvas id="gameCanvas" width="700" height="400"></canvas>
-            <button id="flyBtn" ontouchstart="flapAirplane()" onclick="flapAirplane()">✈️ TAP TO FLY</button>
         </div>
     </section>
 
@@ -379,9 +379,6 @@
             const tilt = Math.max(-0.45, Math.min(0.45, bird.velocity * 0.07));
             ctx.translate(px + u * 5, py + u * 2);
             ctx.rotate(tilt);
-            ctx.translate(-(px + u * 5), -(py + u * 2));
-            ctx.translate(px + u * 5, py + u * 2);
-            ctx.scale(-1, 1);
             ctx.translate(-(px + u * 5), -(py + u * 2));
 
             // Fuselage
